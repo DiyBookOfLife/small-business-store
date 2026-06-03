@@ -64,3 +64,18 @@ button {
   padding: 12px;
   cursor: pointer;
 }
+
+.status-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.status-page a {
+  color: #111;
+  font-weight: bold;
+}

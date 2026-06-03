@@ -65,6 +65,24 @@ function App() {
     setCart(cart.filter((_, index) => index !== indexToRemove));
   };
 
+  const handleCheckout = async () => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    const response = await fetch(
+      "http://localhost:2020/api/create-checkout-session",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cart }),
+      },
+    );
+
+    const data = await response.json();
+
+    window.location.href = data.url;
+  };
   return (
     <>
       <header>
@@ -122,7 +140,7 @@ function App() {
 
             <h3>Total: ${cart.reduce((sum, item) => sum + item.price, 0)}</h3>
 
-            <button>Checkout</button>
+            <button onClick={handleCheckout}>Checkout</button>
           </>
         )}
       </section>
