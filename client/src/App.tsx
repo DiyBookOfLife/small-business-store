@@ -1,15 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
+type Product = {
+  _id: string;
+  name: string;
+  description: string;
+  price: number;
+};
+
 function App() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [cart, setCart] = useState<Product[]>([]);
+  const [success, setSuccess] = useState("");
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   });
 
+  useEffect(() => {
+    fetch("http://localhost:2020/api/products")
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch((err) => console.error(err));
+  }, []);
+
+  const addToCart = (product: Product) => {
+    setCart((prevCart) => [...prevCart, product]);
+  };
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setFormData({
       ...formData,
@@ -30,6 +52,17 @@ function App() {
 
     const data = await response.json();
     console.log(data);
+
+    setSuccess("Message sent successfully!");
+
+    setFormData({
+      name: "",
+      email: "",
+      message: "",
+    });
+  };
+  const removeFromCart = (indexToRemove: number) => {
+    setCart(cart.filter((_, index) => index !== indexToRemove));
   };
 
   return (
@@ -40,13 +73,17 @@ function App() {
         <nav>
           <a href="#home">Home</a>
           <a href="#services">Services</a>
+          <a href="#cart">Cart</a>
           <a href="#contact">Contact</a>
         </nav>
       </header>
 
       <section id="home">
         <h2>Helping Small Businesses Grow Online</h2>
-        <p>Professional websites, online stores, and appointment booking solutions.</p>
+        <p>
+          Professional websites, online stores, and appointment booking
+          solutions.
+        </p>
         <button>Get Started</button>
       </section>
 
@@ -54,21 +91,40 @@ function App() {
         <h2>Services</h2>
 
         <div className="cards">
-          <div className="card">
-            <h3>Business Website</h3>
-            <p>$1,500</p>
-          </div>
+          {products.map((product) => (
+            <div className="card" key={product._id}>
+              <h3>{product.name}</h3>
+              <p>{product.description}</p>
+              <p>${product.price}</p>
 
-          <div className="card">
-            <h3>E-Commerce Store</h3>
-            <p>$2,500+</p>
-          </div>
-
-          <div className="card">
-            <h3>Monthly Maintenance</h3>
-            <p>$150/month</p>
-          </div>
+              <button onClick={() => addToCart(product)}>Add To Cart</button>
+            </div>
+          ))}
         </div>
+      </section>
+
+      <section id="cart">
+        <h2>Shopping Cart</h2>
+
+        {cart.length === 0 ? (
+          <p>Your cart is empty.</p>
+        ) : (
+          <>
+            {cart.map((item, index) => (
+              <div key={index}>
+                <p>
+                  {item.name} - ${item.price}
+                </p>
+
+                <button onClick={() => removeFromCart(index)}>Remove</button>
+              </div>
+            ))}
+
+            <h3>Total: ${cart.reduce((sum, item) => sum + item.price, 0)}</h3>
+
+            <button>Checkout</button>
+          </>
+        )}
       </section>
 
       <section id="contact">
@@ -99,6 +155,8 @@ function App() {
           ></textarea>
 
           <button type="submit">Send Message</button>
+
+          {success && <p>{success}</p>}
         </form>
       </section>
     </>
