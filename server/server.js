@@ -1,8 +1,16 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
+
+import ContactMessage from "./models/ContactMessage.js";
 
 dotenv.config();
+
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.log(err));
 
 const app = express();
 
@@ -20,13 +28,20 @@ app.get("/api/test", (req, res) => {
 
 const PORT = process.env.PORT || 2020;
 
-app.post("/api/contact", (req, res) => {
-  console.log(req.body);
+app.post("/api/contact", async (req, res) => {
+  try {
+    const newMessage = await ContactMessage.create(req.body);
 
-  res.json({
-    message: "Contact form received!",
-    data: req.body,
-  });
+    res.status(201).json({
+      message: "Contact message saved!",
+      data: newMessage,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
 });
 
 app.listen(PORT, () => {
