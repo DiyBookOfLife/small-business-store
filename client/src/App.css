@@ -79,3 +79,44 @@ button {
   color: #111;
   font-weight: bold;
 }
+
+.orders-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.orders-page h1 {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.order-card {
+  background: #1f2937;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #374151;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.order-card h3 {
+  color: #60a5fa;
+  margin-bottom: 10px;
+}
+
+.order-card p {
+  margin: 6px 0;
+}
+
+.order-card:hover {
+  transform: translateY(-2px);
+  transition: 0.2s;
+}
+
+.orders-page a {
+  display: inline-block;
+  margin-top: 20px;
+  text-decoration: none;
+  font-weight: bold;
+}

@@ -47,8 +47,39 @@ app.get("/api/products", async (req, res) => {
 });
 const PORT = process.env.PORT || 2020;
 
-// ** POST ROUTES ** //
+// messages route: 
+app.get("/api/contact-messages", async (req, res) => {
+  try {
+    const messages = await ContactMessage.find().sort({
+      createdAt: -1,
+    });
 
+    res.json(messages);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch contact messages",
+      error: error.message,
+    });
+  }
+});
+
+// GET orders route: 
+app.get("/api/orders", async (req, res) => {
+  try {
+    const orders = await Order.find().sort({
+      createdAt: -1,
+    });
+
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch orders",
+      error: error.message,
+    });
+  }
+});
+
+// ** POST ROUTES ** //
 // contact route:
 app.post("/api/contact", async (req, res) => {
   try {
@@ -103,7 +134,7 @@ app.post("/api/create-checkout-session", async (req, res) => {
   }
 });
 
-// order route:
+// POST order route:
 app.post("/api/orders", async (req, res) => {
   try {
     const { cart, sessionId } = req.body;
@@ -146,6 +177,7 @@ app.post("/api/orders", async (req, res) => {
     });
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
